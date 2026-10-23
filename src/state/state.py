@@ -171,8 +171,9 @@ class GeneralGameState(ABC):
         for temp_win_index in range(int(len(self.temp_wins) / 2)):
             description = tuple(sorted(self.temp_wins[2 * temp_win_index].items()))
             book_id = self.temp_wins[2 * temp_win_index + 1]
+            # Sims run in increasing order, so a repeat of this book can only be the last id.
             if description in self.recorded_events and (
-                book_id not in self.recorded_events[description]["bookIds"]
+                self.recorded_events[description]["bookIds"][-1] != book_id
             ):
                 self.recorded_events[description]["timesTriggered"] += 1
                 self.recorded_events[description]["bookIds"] += [book_id]

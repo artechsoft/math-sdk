@@ -81,26 +81,33 @@ class Cluster:
                 )
 
     @staticmethod
+    def grow_cluster(names, wilds, already_checked, local_checked, cluster, reel, row, og_symbol):
+        """check_all_neighbours on precomputed name and wild grids with sets, in the same visiting order."""
+        neighbours = []
+        for r, w in ((reel - 1, row), (reel + 1, row), (reel, row - 1), (reel, row + 1)):
+            if 0 <= r < len(names) and 0 <= w < len(names[r]) and (r, w) not in local_checked:
+                neighbours.append((r, w))
+                local_checked.add((r, w))
+        for r, w in neighbours:
+            if wilds[r][w] or names[r][w] == og_symbol:
+                cluster.append((r, w))
+                already_checked.add((r, w))
+                Cluster.grow_cluster(names, wilds, already_checked, local_checked, cluster, r, w, og_symbol)
+
+    @staticmethod
     def get_clusters(board: list[list[Symbol]], wild_key: str = "wild") -> dict:
         """Return all symbol clusters of size >= 1."""
-        already_checked = []
+        names = [[sym.name for sym in column] for column in board]
+        wilds = [[sym.check_attribute(wild_key) for sym in column] for column in board]
+        already_checked = set()
         clusters = defaultdict(list)
-        for reel, _ in enumerate(board):
-            for row, _ in enumerate(board[reel]):
-                if (reel, row) not in already_checked and not (board[reel][row].check_attribute(wild_key)):
+        for reel, column in enumerate(names):
+            for row, symbol in enumerate(column):
+                if (reel, row) not in already_checked and not wilds[reel][row]:
                     potential_cluster = [(reel, row)]
-                    already_checked += [(reel, row)]
-                    local_checked = [(reel, row)]
-                    symbol = board[reel][row].name
-                    Cluster.check_all_neighbours(
-                        board,
-                        already_checked,
-                        local_checked,
-                        potential_cluster,
-                        reel,
-                        row,
-                        symbol,
-                        wild_key,
+                    already_checked.add((reel, row))
+                    Cluster.grow_cluster(
+                        names, wilds, already_checked, {(reel, row)}, potential_cluster, reel, row, symbol
                     )
                     clusters[symbol].append(potential_cluster)
 

@@ -1,6 +1,6 @@
 """Defines reusable events"""
 
-from copy import deepcopy
+from src.state.books import copy_event
 from src.events.event_constants import EventConstants
 
 
@@ -142,7 +142,7 @@ def win_info_event(gamestate, include_padding_index=True):
     include_padding_index: starts winning-symbol positions at row=1, to account for top/bottom symbol inclusion in board
     """
     win_data_copy = {}
-    win_data_copy["wins"] = deepcopy(gamestate.win_data["wins"])
+    win_data_copy["wins"] = copy_event(gamestate.win_data["wins"])
     for idx, w in enumerate(win_data_copy["wins"]):
         if include_padding_index:
             new_positions = []
