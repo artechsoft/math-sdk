@@ -21,6 +21,7 @@ class GameConfig(Config):
         self.game_id = "moonpack"
         self.provider_number = 0
         self.working_name = "Moonpack"
+        self.game_name = "Moonpack"
         self.wincap = 10000.0
         self.win_type = "cluster"
         self.rtp = 0.9650
@@ -80,6 +81,8 @@ class GameConfig(Config):
             self.reels[r] = self.read_reels_csv(os.path.join(self.reels_path, f))
 
         base, free = self.basegame_type, self.freegame_type
+        # The front end fills the reels from these while a spin runs, before the board reveal.
+        self.padding_reels = {base: self.reels["BR0"], free: self.reels["FR0"]}
 
         def bonus(criteria, quota, moons, wincap=False, mode_cap=None):
             """A distribution that forces a bonus of the tier `moons` starts."""
