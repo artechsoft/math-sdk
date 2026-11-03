@@ -31,6 +31,17 @@ class GameExecutables(GameCalculations):
         self.set_end_tumble_event()
         self.win_manager.update_gametype_wins(self.gametype)
 
+    def tumble_game_board(self):
+        """The SDK lists only winning cells as exploding. After a merge nothing won, so list the
+        freed wolf cells instead; the front end clears exactly these before new symbols drop."""
+        freed = [
+            {"reel": r, "row": w + 1} for r, col in enumerate(self.board) for w, sym in enumerate(col) if sym.explode
+        ]
+        super().tumble_game_board()
+        event = self.book.events[-1]
+        if not event["explodingSymbols"]:
+            event["explodingSymbols"] = freed
+
     def wolf_positions(self) -> list:
         return [(r, w) for r, col in enumerate(self.board) for w, sym in enumerate(col) if sym.check_attribute("wolf")]
 
