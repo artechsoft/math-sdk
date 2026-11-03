@@ -48,7 +48,9 @@ class GameConfig(Config):
         # When a board settles, each pack merges into one alpha and the freed cells tumble in.
         # In bonuses wolves stay between spins, and 4 or 5 moons upgrade a lower tier.
         # M moons are the scatter.
-        self.special_symbols = {"scatter": ["M"], "wolf": ["W"]}
+        # "multiplier" on W prints each wolf's value in reveal and tumbleBoard events (json_ready_sym)
+        # so the front end draws the badge from the book. Cluster detection only reads "wild", so pays don't change.
+        self.special_symbols = {"scatter": ["M"], "wolf": ["W"], "multiplier": ["W"]}
 
         # Tier by moons on the board when the spin's tumbles end: 3 Free Spins, 4 Full Moon, 5+ Blood Moon.
         # Free Spins play 10 spins, Full Moon 12, Blood Moon 15; 3 moons in a bonus add 3.
